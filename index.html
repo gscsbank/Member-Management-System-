@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSCS - Member Management System</title>
+    <meta name="description" content="Next-Generation iOS-Inspired GSCS Member & Account Management Platform">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="ios-body">
+
+    <!-- Main Floating App Container (iOS Style) -->
+    <div class="ios-app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="ios-sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo-ios">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
+                    </svg>
+                </div>
+                <div class="brand-title-wrap">
+                    <span class="brand-name">GSCS <span class="pro-tag">PRO</span></span>
+                    <span class="brand-subtitle">Member Management System</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+                    </span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#directory" class="nav-link" data-page="directory">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </span>
+                    <span class="nav-text">Account Directory</span>
+                    <span class="nav-badge" id="navAccountBadge">0</span>
+                </a>
+                <a href="#birthdays" class="nav-link" data-page="birthdays">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M12 14v4M10 16h4"/></svg>
+                    </span>
+                    <span class="nav-text">Birthday Tracker</span>
+                    <span class="nav-badge alert" id="navBirthdayAlert">0</span>
+                </a>
+                <a href="#import" class="nav-link" data-page="import">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                    </span>
+                    <span class="nav-text">Smart PDF / XLS</span>
+                </a>
+                <a href="#analytics" class="nav-link" data-page="analytics">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </span>
+                    <span class="nav-text">Demographics</span>
+                </a>
+                <a href="#bulk-sms" class="nav-link" data-page="bulk-sms">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+                    </span>
+                    <span class="nav-text">Bulk SMS</span>
+                    <span class="nav-badge" id="navBulkSmsBadge" style="background:#fef3c7;color:#92400e;">NEW</span>
+                </a>
+                <a href="#add-account" class="nav-link" data-page="add-account">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    </span>
+                    <span class="nav-text">Add Account</span>
+                </a>
+                <a href="#settings" class="nav-link" data-page="settings">
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </span>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-pill-card">
+                    <div class="avatar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>
+                    </div>
+                    <div class="user-info">
+                        <strong>Galapitiyagama</strong>
+                        <span>SANASA Co-Op</span>
+                    </div>
+                </div>
+                <div class="dev-credits-card">
+                    <span class="dev-label">DEVELOPED BY</span>
+                    <strong class="dev-name">iraasoft Solution</strong>
+                    <span class="dev-sub">Developed for Galapitiyagama SANASA Society</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <main class="ios-main-content">
+            <!-- Header Bar -->
+            <header class="ios-header">
+                <div class="header-search-bar">
+                    <span class="search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" id="globalSearchInput" placeholder="Search Account No, Phone, NIC...">
+                </div>
+
+                <div class="header-right-actions">
+                    <div class="ios-date-badge" id="currentDateBadge"></div>
+                </div>
+            </header>
+
+            <!-- Dynamic View Container -->
+            <div class="ios-view-container">
+
+                <!-- VIEW 1: DASHBOARD -->
+                <section class="view-page active" id="view-dashboard">
+                    
+                    <div class="welcome-banner">
+                        <div class="banner-text">
+                            <h2>Good day, Manager</h2>
+                            <p>Here is your real-time co-op member activity, birthdays & demographics.</p>
+                        </div>
+                        <div class="banner-actions">
+                            <button class="btn-ios btn-primary" onclick="document.querySelector('[data-page=import]').click()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                                <span>Import SmartCoop PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Cards Grid (Inspired by HRdream Pro Cards) -->
+                    <div class="quick-action-cards">
+                        <div class="card-action bg-blue">
+                            <div class="card-action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div class="card-action-info">
+                                <span class="card-label">TOTAL ACCOUNTS</span>
+                                <h3 id="dashTotalAccounts">0</h3>
+                                <p id="dashTotalSubtitle">0 Unique records</p>
+                            </div>
+                        </div>
+
+                        <div class="card-action bg-teal">
+                            <div class="card-action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M12 14v4M10 16h4"/></svg>
+                            </div>
+                            <div class="card-action-info">
+                                <span class="card-label">BIRTHDAYS TODAY</span>
+                                <h3 id="dashTodayBirthdaysCount">0</h3>
+                                <p>Celebrate today</p>
+                            </div>
+                        </div>
+
+                        <div class="card-action bg-purple">
+                            <div class="card-action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <div class="card-action-info">
+                                <span class="card-label">NEXT 7 DAYS BIRTHDAYS</span>
+                                <h3 id="dashUpcomingWeekCount">0</h3>
+                                <p>Upcoming celebrations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Layout: 2 Columns -->
+                    <div class="dashboard-grid-layout">
+                        
+                        <!-- Left Column: Male/Female Ratio & Today's Wish Widget -->
+                        <div class="dash-col-left">
+                            
+                            <!-- Gender Ratio Card -->
+                            <div class="ios-card">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
+                                        Male / Female Ratio
+                                    </h3>
+                                    <span class="pill-tag" id="genderRatioTag">0 / 0</span>
+                                </div>
+                                <div class="gender-bar-container">
+                                    <div class="gender-bar-labels">
+                                        <span id="malePercentLabel">Male: 0%</span>
+                                        <span id="femalePercentLabel">Female: 0%</span>
+                                    </div>
+                                    <div class="gender-progress-track">
+                                        <div class="gender-fill-male" id="genderFillMale" style="width: 50%;"></div>
+                                        <div class="gender-fill-female" id="genderFillFemale" style="width: 50%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Today's Birthday Wishes Widget -->
+                            <div class="ios-card margin-top">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M12 14v4M10 16h4"/></svg>
+                                        Today's Birthday Celebrations
+                                    </h3>
+                                    <span class="pill-tag green">Action Required</span>
+                                </div>
+                                <div id="widgetTodayBirthdaysList">
+                                    <p class="empty-state">No birthdays today.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Column: Upcoming 7 Days Birthdays -->
+                        <div class="dash-col-right">
+                            <div class="ios-card">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        Upcoming Birthdays (Next 7 Days)
+                                    </h3>
+                                    <span class="pill-tag blue">Upcoming</span>
+                                </div>
+                                <div id="widgetUpcomingBirthdaysList">
+                                    <p class="empty-state">No upcoming birthdays in the next 7 days.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- VIEW 2: ACCOUNT DIRECTORY -->
+                <section class="view-page" id="view-directory">
+                    <div class="view-header space-between">
+                        <div>
+                            <h2>Account Directory</h2>
+                            <p>All clean & deduplicated records</p>
+                        </div>
+                        <div class="header-controls">
+                            <button class="btn-ios btn-danger-ghost btn-sm" id="btnBulkDelete" style="display:none;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>Delete Selected (<span id="bulkCountBadge">0</span>)</span>
+                            </button>
+                            <select id="filterGenderSelect" class="ios-select">
+                                <option value="all">All Genders</option>
+                                <option value="male">Male (පුරුෂ)</option>
+                                <option value="female">Female (ස්ත්‍රී)</option>
+                            </select>
+                            <select id="pageSizeSelect" class="ios-select">
+                                <option value="25">25 per page</option>
+                                <option value="50">50 per page</option>
+                                <option value="100">100 per page</option>
+                                <option value="10000">Show All</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="ios-card overflow-hidden">
+                        <div class="table-scroll">
+                            <table class="ios-table" id="directoryTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width:36px;"><input type="checkbox" id="selectAllCheckbox"></th>
+                                        <th data-sort="accountNo">Account No ⇳</th>
+                                        <th data-sort="nic">NIC Number ⇳</th>
+                                        <th data-sort="birthday">Birthday ⇳</th>
+                                        <th data-sort="age">Age ⇳</th>
+                                        <th data-sort="gender">Gender ⇳</th>
+                                        <th data-sort="phone">Phone ⇳</th>
+                                        <th data-sort="joinedDate">Joined Date ⇳</th>
+                                        <th style="text-align:right;">Actions (WhatsApp/SMS/Call)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="directoryTbody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-footer-bar">
+                            <span id="tablePaginationInfo">Showing 0 accounts</span>
+                            <div class="pagination-btns" id="paginationControls"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: BIRTHDAY TRACKER HUB -->
+                <section class="view-page" id="view-birthdays">
+                    <div class="view-header">
+                        <div>
+                            <h2>Birthday Tracker & Wish Hub</h2>
+                            <p>Send instant WhatsApp, SMS, or Direct Phone Calls</p>
+                        </div>
+                    </div>
+
+                    <div class="birthday-sections">
+                        <!-- Today Section -->
+                        <div class="ios-card margin-bottom">
+                            <div class="card-title-bar">
+                                <h3>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M12 14v4M10 16h4"/></svg>
+                                    Celebrating Today
+                                </h3>
+                            </div>
+                            <div class="birthday-cards-grid" id="fullTodayBirthdaysGrid"></div>
+                        </div>
+
+                        <!-- Next 7 Days Section -->
+                        <div class="ios-card">
+                            <div class="card-title-bar">
+                                <h3>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    Next 7 Days Birthdays
+                                </h3>
+                            </div>
+                            <div class="birthday-cards-grid" id="fullUpcoming7DaysGrid"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: SMART IMPORT (PDF / EXCEL) -->
+                <section class="view-page" id="view-import">
+                    <div class="view-header">
+                        <div>
+                            <h2>Smart PDF & Excel Import</h2>
+                            <p>Automatic background deduplication and field updating</p>
+                        </div>
+                    </div>
+
+                    <div class="ios-card import-box">
+                        <div class="dropzone-area" id="smartDropzone">
+                            <div class="dropzone-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                            </div>
+                            <h3>Drag & Drop SmartCoop PDF or Excel File</h3>
+                            <p>Supports PDF, XLSX, XLS & CSV format files</p>
+                            <input type="file" id="fileInput" accept=".pdf,.xlsx,.xls,.csv" hidden>
+                            <button class="btn-ios btn-primary margin-top" onclick="document.getElementById('fileInput').click()">Browse Computer</button>
+                        </div>
+
+                        <div class="import-progress" id="importProgress" style="display:none;">
+                            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+                            <span id="progressLabel">Parsing file data...</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: DEMOGRAPHICS & AGE -->
+                <section class="view-page" id="view-analytics">
+                    <div class="view-header space-between">
+                        <div>
+                            <h2>Demographics & Age Breakdown</h2>
+                            <p>Statistical distribution by age groups</p>
+                        </div>
+                        <div class="age-filter-controls">
+                            <input type="number" id="ageMinInput" value="0" placeholder="Min" class="ios-input-sm">
+                            <span>to</span>
+                            <input type="number" id="ageMaxInput" value="100" placeholder="Max" class="ios-input-sm">
+                            <button class="btn-ios btn-primary btn-sm" id="btnFilterAge">Filter Range</button>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" id="analyticsStatsGrid"></div>
+
+                    <div class="ios-card margin-top">
+                        <div class="table-scroll">
+                            <table class="ios-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account No</th>
+                                        <th>NIC Number</th>
+                                        <th>Birthday</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ageFilteredTbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 6: ADD SINGLE ACCOUNT -->
+                <section class="view-page" id="view-add-account">
+                    <div class="view-header">
+                        <div>
+                            <h2>Add Single Account</h2>
+                            <p>Manually insert a record into database</p>
+                        </div>
+                    </div>
+
+                    <div class="ios-card form-wrapper">
+                        <form id="addAccountForm" class="ios-grid-form">
+                            <div class="form-group">
+                                <label>Account Number *</label>
+                                <input type="text" id="addAccountNo" placeholder="e.g. 010100001" required class="ios-input">
+                            </div>
+                            <div class="form-group">
+                                <label>NIC Number</label>
+                                <input type="text" id="addNic" placeholder="e.g. 442233160V" class="ios-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Birthday (YYYY-MM-DD)</label>
+                                <input type="date" id="addBirthday" class="ios-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select id="addGender" class="ios-input">
+                                    <option value="Male">Male (පුරුෂ)</option>
+                                    <option value="Female">Female (ස්ත්‍රී)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" id="addPhone" placeholder="e.g. 0714708954" class="ios-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Joined Date (YYYY-MM-DD)</label>
+                                <input type="date" id="addJoinedDate" class="ios-input">
+                            </div>
+                            <div class="form-group full-width">
+                                <button type="submit" class="btn-ios btn-primary btn-lg">Create Account Record</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- VIEW 8: BULK SMS BROADCASTER -->
+                <section class="view-page" id="view-bulk-sms">
+                    <div class="view-header space-between">
+                        <div>
+                            <h2>📲 Bulk SMS Broadcaster</h2>
+                            <p>Account prefix anuwawa filter kara custom message SMS yawanna (e.g. 0101, 0102...)</p>
+                        </div>
+                    </div>
+
+                    <!-- Composer Card -->
+                    <div class="ios-card" style="margin-bottom:24px;">
+                        <div class="card-title-bar">
+                            <h3>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                SMS Message Composer
+                            </h3>
+                            <span class="pill-tag blue" id="bulkSmsCountTag">0 Recipients</span>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                            <!-- Left: Filters -->
+                            <div style="display:flex;flex-direction:column;gap:14px;">
+                                <div class="form-group">
+                                    <label>Account Number Prefix (e.g. 0101, 0102, 010)</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="text" id="bulkSmsPrefix" class="ios-input" placeholder="e.g. 0101" value="0101" style="flex:1;">
+                                        <button class="btn-ios btn-primary" id="btnBulkSmsFilter">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                                            Filter
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Gender Filter</label>
+                                    <select id="bulkSmsGender" class="ios-select" style="width:100%;">
+                                        <option value="all">All Genders</option>
+                                        <option value="male">Male Only</option>
+                                        <option value="female">Female Only</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Filter</label>
+                                    <select id="bulkSmsPhoneFilter" class="ios-select" style="width:100%;">
+                                        <option value="all">All (including no phone)</option>
+                                        <option value="valid" selected>Valid Phone Numbers Only</option>
+                                    </select>
+                                </div>
+                                <div id="bulkSmsStatBanner" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:12px;padding:14px;font-size:13px;color:#1e40af;display:none;">
+                                    <strong id="bulkSmsStatText"></strong>
+                                </div>
+                            </div>
+
+                            <!-- Right: Message Compose -->
+                            <div style="display:flex;flex-direction:column;gap:14px;">
+                                <div class="form-group">
+                                    <label>SMS Message (Sinhala / English)</label>
+                                    <textarea id="bulkSmsMessage" class="ios-input" rows="6" style="resize:vertical;font-size:13.5px;line-height:1.6;" placeholder="Type your announcement here...">2026 October masa Mahasabhawa 2026/10/11 dina ude 9.00 ta Galapitiyagama SANASA Reswim Shalawa diwi pewethwe. Obage pැmිnapada Apekshawen Wemin.
+
+- Galapitiyagama SANASA Co-Op (GSCS BANK)</textarea>
+                                </div>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                    <button class="btn-ios btn-primary" id="btnBulkSmsGenerate">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        Generate SMS List
+                                    </button>
+                                    <button class="btn-ios btn-secondary" id="btnCopyAllNumbers">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        Copy All Numbers
+                                    </button>
+                                    <button class="btn-ios btn-secondary" id="btnCopyMessage">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        Copy Message Text
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div id="bulkSmsSendProgress" style="display:none;margin-bottom:16px;">
+                        <div style="background:#f1f5f9;border-radius:8px;overflow:hidden;height:8px;">
+                            <div id="bulkSmsProgressFill" style="background:linear-gradient(90deg,#2563eb,#06b6d4);height:100%;width:0%;transition:width 0.3s;"></div>
+                        </div>
+                        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;" id="bulkSmsProgressLabel">Preparing...</p>
+                    </div>
+
+                    <!-- SMS List Results -->
+                    <div class="ios-card overflow-hidden" id="bulkSmsResultCard" style="display:none;">
+                        <div style="padding:16px 20px;border-bottom:1px solid var(--ios-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <h3 style="font-size:16px;font-weight:700;color:var(--text-dark);">SMS Send List</h3>
+                                <span class="pill-tag green" id="bulkSmsReadyCount">0 Ready</span>
+                                <span class="pill-tag" style="background:#fef3c7;color:#92400e;" id="bulkSmsSkipCount">0 Skipped</span>
+                            </div>
+                            <!-- SEND ALL BUTTON -->
+                            <button class="btn-ios btn-primary" id="btnSendAllNow" onclick="openBulkSendAllModal()" style="background:linear-gradient(135deg,#16a34a,#15803d);font-size:13px;padding:10px 22px;">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                Okkoma Send Karanna (Eka Parata)
+                            </button>
+                        </div>
+                        <div style="max-height:400px;overflow-y:auto;" id="bulkSmsListContainer"></div>
+                        <div style="padding:12px 20px;border-top:1px solid var(--ios-border);background:#f8fafc;">
+                            <span style="font-size:12px;color:var(--text-muted);">💡 "Okkoma Send Karanna" button ekala hemotama eka parata yawanna puluwan. Taniwa yawanakota "SMS" buttons use karanna.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 7: SYSTEM & BACKUP SETTINGS -->
+                <section class="view-page" id="view-settings">
+                    <div class="view-header">
+                        <div>
+                            <h2>System & Backup Settings</h2>
+                            <p>Manage cloud backups, Google Sheets sync & system data</p>
+                        </div>
+                    </div>
+
+                    <!-- CARD: Google Sheets Real-Time Cloud Sync (Apps Script) -->
+                    <div class="ios-card" style="margin-bottom:24px; border:1.5px solid #22c55e; background:#f0fdf4;">
+                        <div class="card-title-bar" style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3 style="color:#15803d; display:flex; align-items:center; gap:8px;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                Google Sheets Cloud Backup (Live Sync via Google Apps Script)
+                            </h3>
+                            <span id="appsScriptSyncBadge" class="badge" style="background:#dcfce7; color:#15803d; border:1px solid #86efac; font-size:12px; font-weight:600; padding:4px 10px; border-radius:20px;">
+                                Ready
+                            </span>
+                        </div>
+                        
+                        <p style="font-size:13px; color:#166534; margin:8px 0 16px 0; line-height:1.5;">
+                            ඔබේ Member Database එක කෙලින්ම ඔබගේ Google Sheet එකට live sync / backup කර සුරක්ෂිතව තබා ගන්න. Google Apps Script Web App URL එක මෙතැනට දමා <strong>"Sync &amp; Backup Now"</strong> click කරන්න.
+                        </p>
+
+                        <div style="background:#ffffff; border:1px solid #bbf7d0; border-radius:12px; padding:16px; margin-bottom:14px;">
+                            <label style="font-size:12px; font-weight:700; color:#14532d; display:block; margin-bottom:6px;">
+                                Google Apps Script Web App URL:
+                            </label>
+                            <div style="display:flex; gap:8px;">
+                                <input type="url" id="appScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="ios-input" style="flex:1;">
+                                <button type="button" class="btn-ios btn-secondary" id="btnSaveAppScriptUrl" style="white-space:nowrap; background:#f0fdf4; color:#15803d; border:1px solid #86efac; font-weight:600;">
+                                    Save URL
+                                </button>
+                            </div>
+                            <small id="appScriptStatusNote" style="display:block; margin-top:8px; font-size:12px; color:#475569;">
+                                Last synced: Never
+                            </small>
+                        </div>
+
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                            <button type="button" class="btn-ios btn-primary" id="btnSyncAppsScript" style="background:linear-gradient(135deg, #16a34a, #15803d); border:none; padding:11px 22px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                <span id="btnSyncAppsScriptText">☁️ Sync &amp; Backup to Google Sheet Now</span>
+                            </button>
+
+                            <button type="button" class="btn-ios btn-secondary" id="btnOpenGoogleSheet" style="display:none; align-items:center; gap:6px; background:#ffffff; color:#15803d; border:1px solid #86efac; font-weight:600; padding:11px 16px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                <span>Open Google Sheet ↗</span>
+                            </button>
+
+                            <button type="button" class="btn-ios btn-secondary" id="btnToggleScriptGuide" style="margin-left:auto; background:#ffffff; border:1px dashed #86efac; color:#15803d; font-size:12px; padding:8px 14px;">
+                                <span>❓ Google Script URL එක හදාගන්නේ කොහොමද?</span>
+                            </button>
+                        </div>
+
+                        <!-- Expandable Quick Guide -->
+                        <div id="scriptGuideBox" style="display:none; margin-top:16px; padding:16px; background:#ffffff; border-radius:12px; border:1px solid #cbd5e1; font-size:13px; color:#334155; line-height:1.6;">
+                            <strong style="color:#0f172a; font-size:14px; display:block; margin-bottom:8px;">📌 Google Apps Script Web App එක සාදාගන්නා පියවර (Instructions):</strong>
+                            <ol style="margin:0 0 0 20px; padding:0;">
+                                <li>Google Drive හෝ <a href="https://sheets.new" target="_blank" style="color:#2563eb; font-weight:600; text-decoration:underline;">sheets.new</a> වෙත ගොස් අලුත් Google Sheet එකක් සාදා ගන්න (නම GSCS_Member_Backup වගේ දෙන්න).</li>
+                                <li>Sheet එකේ ඉහළ මෙනුවේ <strong>Extensions &gt; Apps Script</strong> (දිගු &gt; ඇප්ස් ස්ක්‍රිප්ට්) click කරන්න.</li>
+                                <li>එහි ඇති සියලුම කේත මකා දමා අප සපයා ඇති Google Apps Script කේතය (Code) paste කරන්න.</li>
+                                <li>ඉහළ ඇති Save icon එක (Ctrl+S) click කරන්න.</li>
+                                <li>ඉහළ දකුණු කෙලවරේ ඇති නිල් පාට <strong>Deploy &gt; New deployment</strong> click කරන්න.</li>
+                                <li>වම් පැත්තේ Gear icon (⚙️) click කර <strong>Web app</strong> තෝරන්න.</li>
+                                <li><strong>Description:</strong> "GSCS Backup", <strong>Execute as:</strong> "Me", <strong>Who has access:</strong> <span style="color:#dc2626; font-weight:700;">"Anyone"</span> ලෙස තෝරා <strong>Deploy</strong> click කරන්න.</li>
+                                <li>Google Account එකෙන් Authorization ඉල්ලුවොත් <em>Authorize access &gt; Advanced &gt; Go to (unsafe) &gt; Allow</em> කරන්න.</li>
+                                <li>ලැබෙන <strong>Web App URL</strong> එක copy කර මෙහි ඇති Box එකට paste කර "Save URL" කරන්න!</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                        
+                        <!-- Left Box: Google Drive & Gmail Sync -->
+                        <div class="ios-card">
+                            <div class="card-title-bar">
+                                <h3>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" style="vertical-align:middle; margin-right:6px;"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                                    Google Drive & Gmail Sync Center
+                                </h3>
+                            </div>
+                            
+                            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:14px; margin-bottom:18px; font-size:13px; color:#1e40af; line-height:1.4;">
+                                <strong>☁️ Direct Cloud Backup (No Apps Script Needed)</strong><br>
+                                Save your GSCS Bank database directly into your Google Drive or send a full report to your Gmail inbox.
+                            </div>
+
+                            <form id="backupForm" class="ios-grid-form" style="grid-template-columns:1fr; gap:14px;">
+                                <div class="form-group">
+                                    <label>Your Gmail Address (Google Account) *</label>
+                                    <input type="email" id="backupEmailInput" placeholder="e.g. galapitiyagama.sanasa@gmail.com" required class="ios-input">
+                                </div>
+
+                                <!-- Direct Google Drive Action Box -->
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                                    <strong style="font-size:13px; color:#0f172a; display:flex; align-items:center; gap:6px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                                        Step 1: Save Backup to Google Drive
+                                    </strong>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                        <button type="button" class="btn-ios btn-primary" id="btnExportDriveJSON" style="justify-content:center;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                            <span>Drive JSON File</span>
+                                        </button>
+                                        
+                                        <button type="button" class="btn-ios btn-secondary" id="btnExportDriveExcel" style="justify-content:center;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                                            <span>Drive Excel File</span>
+                                        </button>
+                                    </div>
+                                    <button type="button" class="btn-ios btn-secondary" id="btnOpenDriveFolder" style="justify-content:center; background:#ffffff; color:#2563eb; border:1px solid #bfdbfe;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><polyline points="12 13 12 9 12 13"/></svg>
+                                        <span>Open My Google Drive Folder ↗</span>
+                                    </button>
+                                </div>
+
+                                <!-- Direct Gmail Action Box -->
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                                    <strong style="font-size:13px; color:#0f172a; display:flex; align-items:center; gap:6px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ea4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.545l8.073-6.052c1.618-1.214 3.927-.059 3.927 1.964z"/></svg>
+                                        Step 2: Send Full Backup to Gmail Inbox
+                                    </strong>
+                                    <button type="button" class="btn-ios btn-secondary" id="btnSendGmailBackup" style="width:100%; justify-content:center; background:#ea4335; color:white; border:none; padding:10px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.545l8.073-6.052c1.618-1.214 3.927-.059 3.927 1.964z"/></svg>
+                                        <span>Open Gmail Compose with Database Backup</span>
+                                    </button>
+                                </div>
+
+                                <div style="margin-top:4px;">
+                                    <button type="submit" class="btn-ios btn-primary" style="width:100%; justify-content:center;">Save Email Address</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Right Column: Data Export & Reset DB Danger Zone -->
+                        <div style="display:flex; flex-direction:column; gap:24px;">
+                            
+                            <!-- Export Data Card -->
+                            <div class="ios-card">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        Data Export & Reports
+                                    </h3>
+                                </div>
+                                <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Export clean CSV files containing all member accounts, birthdays, NICs, and contact info.</p>
+                                <button class="btn-ios btn-secondary" id="btnExportCSV" style="width:100%; justify-content:center; padding:12px;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <span>Export Full Account Database (CSV)</span>
+                                </button>
+                            </div>
+
+                            <!-- Danger Zone Card -->
+                            <div class="ios-card" style="border-color:#fca5a5; background:#fff5f5;">
+                                <div class="card-title-bar">
+                                    <h3 style="color:#dc2626;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="vertical-align:middle; margin-right:6px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        Danger Zone - Reset System
+                                    </h3>
+                                </div>
+                                <p style="font-size:13px; color:#991b1b; margin-bottom:16px; line-height:1.4;">
+                                    <strong>Warning:</strong> Resetting the database will permanently wipe all local account records. Make sure to download a Google Drive or Excel backup first.
+                                </p>
+                                <button class="btn-ios btn-danger-ghost" id="btnClearData" style="width:100%; justify-content:center; background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; padding:12px; font-weight:800;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                    <span>Reset Entire System Database</span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Account Details Modal -->
+    <div class="ios-modal-overlay" id="accountModal" style="display:none;">
+        <div class="ios-modal-card">
+            <div class="modal-title-bar">
+                <h3>Account Inspection Details</h3>
+                <button class="btn-close" id="btnModalClose">✕</button>
+            </div>
+            <div class="modal-content" id="accountModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Account Edit Modal -->
+    <div class="ios-modal-overlay" id="editModal" style="display:none;">
+        <div class="ios-modal-card">
+            <div class="modal-title-bar">
+                <h3>Edit Account Details</h3>
+                <button class="btn-close" onclick="document.getElementById('editModal').style.display='none'">✕</button>
+            </div>
+            <div class="modal-content">
+                <form id="editAccountForm" class="ios-grid-form">
+                    <input type="hidden" id="editAccNoHidden">
+                    <div class="form-group">
+                        <label>Account Number</label>
+                        <input type="text" id="editAccNoDisplay" disabled class="ios-input" style="background:#f1f5f9;">
+                    </div>
+                    <div class="form-group">
+                        <label>NIC Number</label>
+                        <input type="text" id="editNic" class="ios-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Birthday</label>
+                        <input type="date" id="editBirthday" class="ios-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="editGender" class="ios-input">
+                            <option value="Male">Male (පුරුෂ)</option>
+                            <option value="Female">Female (ස්ත්‍රී)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="editPhone" class="ios-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Joined Date</label>
+                        <input type="date" id="editJoinedDate" class="ios-input">
+                    </div>
+                    <div class="form-group full-width margin-top">
+                        <button type="submit" class="btn-ios btn-primary btn-lg">Save Account Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- BULK SEND ALL MODAL -->
+    <div class="ios-modal-overlay" id="bulkSendAllModal" style="display:none;">
+        <div class="ios-modal-card" style="max-width:680px;width:95%;">
+            <div class="modal-title-bar" style="background:linear-gradient(135deg,#16a34a,#15803d);">
+                <h3 style="color:white;display:flex;align-items:center;gap:8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Okkoma SMS Eka Parata Yawanna
+                </h3>
+                <button class="btn-close" onclick="document.getElementById('bulkSendAllModal').style.display='none'" style="color:white;">✕</button>
+            </div>
+            <div class="modal-content" style="padding:0;">
+
+                <!-- Step tabs -->
+                <div style="display:flex;border-bottom:2px solid #e2e8f0;">
+                    <button class="bulk-tab-btn active" id="tabStep1" onclick="switchBulkTab(1)" style="flex:1;padding:14px;font-size:13px;font-weight:700;border:none;background:#eff6ff;color:#2563eb;border-bottom:2px solid #2563eb;cursor:pointer;">📋 Step 1 — Numbers Copy Karanna</button>
+                    <button class="bulk-tab-btn" id="tabStep2" onclick="switchBulkTab(2)" style="flex:1;padding:14px;font-size:13px;font-weight:700;border:none;background:white;color:#64748b;cursor:pointer;">✍️ Step 2 — Message Copy Karanna</button>
+                    <button class="bulk-tab-btn" id="tabStep3" onclick="switchBulkTab(3)" style="flex:1;padding:14px;font-size:13px;font-weight:700;border:none;background:white;color:#64748b;cursor:pointer;">📤 Step 3 — CSV Download</button>
+                </div>
+
+                <!-- Step 1: Copy Numbers -->
+                <div id="bulkTabContent1" style="padding:20px;">
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:#15803d;line-height:1.6;">
+                        <strong>📱 Bulk SMS App Ekak Use Karanna (Recommended):</strong><br>
+                        1. Meka numbers copy karanna<br>
+                        2. Phone eke <strong>"Bulk SMS"</strong> app ekak download karanna (e.g. <em>Multi SMS Sender</em>)<br>
+                        3. Numbers paste karanna, message type karanna → Send!
+                    </div>
+                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">ALL PHONE NUMBERS (<span id="bulkModalNumberCount">0</span> numbers):</label>
+                    <textarea id="bulkAllNumbersText" readonly style="width:100%;height:160px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:12px;font-family:monospace;resize:none;color:#0f172a;"></textarea>
+                    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+                        <button class="btn-ios btn-primary" onclick="copyBulkNumbers()" style="flex:1;justify-content:center;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            Numbers Copy Karanna
+                        </button>
+                        <button class="btn-ios btn-secondary" onclick="switchBulkTab(2)" style="flex:1;justify-content:center;">Next Step →</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Copy Message -->
+                <div id="bulkTabContent2" style="padding:20px;display:none;">
+                    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:#1e40af;line-height:1.6;">
+                        <strong>✍️ SMS Message:</strong> Meka copy karala phone eke bulk SMS app eke paste karanna.
+                    </div>
+                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">SMS MESSAGE:</label>
+                    <textarea id="bulkModalMessageText" readonly style="width:100%;height:140px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;resize:none;color:#0f172a;"></textarea>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <button class="btn-ios btn-primary" onclick="copyBulkMessage()" style="flex:1;justify-content:center;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            Message Copy Karanna
+                        </button>
+                        <button class="btn-ios btn-secondary" onclick="switchBulkTab(3)" style="flex:1;justify-content:center;">Next Step →</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Download CSV -->
+                <div id="bulkTabContent3" style="padding:20px;display:none;">
+                    <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:#6b21a8;line-height:1.6;">
+                        <strong>📊 CSV Download Karanna:</strong><br>
+                        Meka download karalaa Excel, Google Sheets, or any bulk SMS service (e.g. <em>Dialog bulk SMS, Mobitel, or online platforms</em>) ekata upload karanna.
+                        CSV file eke columns: <strong>Account No, Phone, Gender, Message</strong>
+                    </div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="btn-ios btn-primary" onclick="downloadBulkSmsCSV()" style="flex:1;justify-content:center;padding:14px;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            CSV File Download (Excel/Bulk SMS)
+                        </button>
+                        <button class="btn-ios btn-secondary" onclick="downloadBulkSmsTxt()" style="flex:1;justify-content:center;padding:14px;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            .TXT Numbers Only
+                        </button>
+                    </div>
+                    <div style="margin-top:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:12px;color:#64748b;line-height:1.8;">
+                        <strong style="color:#0f172a;">💡 Recommended Bulk SMS Apps (Free):</strong><br>
+                        📱 Android: <em>Multi SMS &amp; Group Texting</em>, <em>SMS Group Sender</em><br>
+                        🌐 Online: <em>bulksms.com</em>, <em>sms.lk</em> (Sri Lanka)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>
