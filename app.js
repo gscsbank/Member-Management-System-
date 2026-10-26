@@ -146,6 +146,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btnSyncAppsScript')?.addEventListener('click', backupToGoogleSheets);
+    document.getElementById('btnRestoreAppsScript')?.addEventListener('click', restoreFromGoogleSheets);
+
+    // Backup File Restore Listeners
+    const backupRestoreFileInput = document.getElementById('backupRestoreFileInput');
+    document.getElementById('btnSelectBackupFile')?.addEventListener('click', () => {
+        backupRestoreFileInput?.click();
+    });
+    backupRestoreFileInput?.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length) {
+            handleBackupFileRestore(e.target.files[0]);
+            e.target.value = '';
+        }
+    });
 
     // Download JSON for Google Drive
     document.getElementById('btnExportDriveJSON')?.addEventListener('click', () => {
@@ -357,10 +370,15 @@ function updateCloudSyncStatus() {
     const statusNote = document.getElementById('appScriptStatusNote');
     const badge = document.getElementById('appsScriptSyncBadge');
     const btnOpenSheet = document.getElementById('btnOpenGoogleSheet');
+    const btnSyncText = document.getElementById('btnSyncAppsScriptText');
 
     const savedUrl = localStorage.getItem('sanasa_appscript_url') || DEFAULT_APPSCRIPT_URL;
     if (urlInput && (!urlInput.value || urlInput.value !== savedUrl)) {
         urlInput.value = savedUrl;
+    }
+
+    if (btnSyncText) {
+        btnSyncText.innerHTML = `☁️ Sync & Backup Database (${dbAccounts.length} Records) to Google Sheet`;
     }
 
     const lastBackup = localStorage.getItem('sanasa_last_cloud_backup');
@@ -368,7 +386,7 @@ function updateCloudSyncStatus() {
 
     if (lastBackup) {
         if (statusNote) {
-            statusNote.innerHTML = `✅ <strong>Last Synced:</strong> ${lastBackup} (${dbAccounts.length} records saved in Google Sheet)`;
+            statusNote.innerHTML = `✅ <strong>Local Database:</strong> ${dbAccounts.length} Records | <strong>Last Synced:</strong> ${lastBackup}`;
             statusNote.style.color = '#15803d';
         }
         if (badge) {
@@ -378,7 +396,7 @@ function updateCloudSyncStatus() {
         }
     } else {
         if (statusNote) {
-            statusNote.textContent = savedUrl ? 'Cloud backend active & connected. Ready to backup.' : 'No URL set. Please paste your Google Apps Script Web App URL.';
+            statusNote.innerHTML = `<strong>Local Database:</strong> ${dbAccounts.length} Records | ${savedUrl ? 'Cloud backend connected & ready.' : 'No URL set.'}`;
             statusNote.style.color = '#15803d';
         }
         if (badge) {
@@ -413,7 +431,7 @@ async function backupToGoogleSheets() {
     const originalText = btnText ? btnText.innerHTML : 'Sync Now';
 
     if (btn) btn.disabled = true;
-    if (btnText) btnText.innerHTML = '⏳ Syncing to Google Sheets...';
+    if (btnText) btnText.innerHTML = `⏳ Syncing ${dbAccounts.length} accounts to Google Sheets...`;
 
     const payload = {
         action: 'backup',
@@ -441,17 +459,156 @@ async function backupToGoogleSheets() {
                 localStorage.setItem('sanasa_sheet_url', result.sheetUrl);
             }
 
-            showToast(`✅ Cloud backup success! ${result.count || dbAccounts.length} accounts synced to Google Sheets.`, 'success');
+            showToast(`✅ Successfully backed up all ${result.count || dbAccounts.length} accounts to Google Sheets!`, 'success');
             updateCloudSyncStatus();
         } else {
             showToast(`Apps Script Error: ${result.message || 'Unknown error'}`, 'danger');
         }
     } catch (err) {
         console.error('Apps Script Sync Error:', err);
-        showToast('Connection error! Please check internet and Web App URL permissions (Must be set to "Anyone").', 'danger');
+        showToast('Connection error! Please check internet and Web App URL permissions.', 'danger');
+    } finally {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.innerHTML = `☁️ Sync & Backup Database (${dbAccounts.length} Records) to Google Sheet`;
+    }
+}
+
+async function restoreFromGoogleSheets() {
+    const urlInput = document.getElementById('appScriptUrlInput');
+    const url = (urlInput?.value.trim()) || localStorage.getItem('sanasa_appscript_url') || DEFAULT_APPSCRIPT_URL;
+
+    if (!url) {
+        showToast('Please enter or save your Google Apps Script Web App URL first!', 'danger');
+        urlInput?.focus();
+        return;
+    }
+
+    const btn = document.getElementById('btnRestoreAppsScript');
+    const btnText = document.getElementById('btnRestoreAppsScriptText');
+    const originalText = btnText ? btnText.innerHTML : 'Restore';
+
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.innerHTML = '⏳ Fetching data from Google Sheets...';
+
+    try {
+        // Fetch data via GET or POST action=fetch
+        const fetchUrl = url + (url.includes('?') ? '&' : '?') + 'action=fetch&t=' + Date.now();
+        const response = await fetch(fetchUrl);
+        const result = await response.json();
+
+        if (result.status === 'success' && Array.isArray(result.accounts)) {
+            if (result.accounts.length === 0) {
+                showToast('Google Sheet is empty or has no member data yet.', 'danger');
+                return;
+            }
+
+            const formattedAccounts = result.accounts.map(formatRestoredAccount);
+            const confirmMsg = `Google Sheet එකෙන් සාමාජික ගිණුම් ${formattedAccounts.length} ක් හමුවිය.\n\nමෙම දත්ත ඔබගේ පද්ධතියට Import / Restore කරගැනීමට අවශ්‍යද?`;
+            if (!confirm(confirmMsg)) return;
+
+            dbAccounts = mergeAndDeduplicate([...dbAccounts, ...formattedAccounts]);
+            saveDatabase();
+            refreshAllViews();
+
+            const timeStr = new Date().toLocaleString('en-US');
+            localStorage.setItem('sanasa_last_cloud_backup', timeStr);
+            updateCloudSyncStatus();
+
+            showToast(`✅ සාර්ථකයි! ගිණුම් ${formattedAccounts.length} ක් Google Sheet එකෙන් පද්ධතියට Import කරගන්නා ලදී.`, 'success');
+        } else {
+            showToast('Restore Failed: ' + (result.message || 'Unknown response from Apps Script'), 'danger');
+        }
+    } catch (err) {
+        console.error('Apps Script Restore Error:', err);
+        showToast('Google Sheet එකෙන් දත්ත ලබාගැනීමට නොහැකි විය. කරුණාකර Apps Script Code එක v2.0 ලෙස update කරන්න.', 'danger');
     } finally {
         if (btn) btn.disabled = false;
         if (btnText) btnText.innerHTML = originalText;
+    }
+}
+
+function formatRestoredAccount(acc) {
+    let accNo = String(acc.accountNo || '').trim();
+    if (accNo.length === 8 && /^\d+$/.test(accNo)) {
+        accNo = '0' + accNo;
+    }
+
+    let phone = String(acc.phone || '-').trim();
+    if (/^\d{9}$/.test(phone)) {
+        phone = '0' + phone;
+    }
+
+    let birthday = String(acc.birthday || '-').trim();
+    if (birthday !== '-' && (birthday.includes('GMT') || birthday.includes('වේලාව') || birthday.includes(':'))) {
+        const d = new Date(birthday);
+        if (!isNaN(d.getTime())) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            birthday = `${year}-${month}-${day}`;
+        }
+    }
+
+    let joinedDate = String(acc.joinedDate || '-').trim();
+    if (joinedDate !== '-' && (joinedDate.includes('GMT') || joinedDate.includes('වේලාව') || joinedDate.includes(':'))) {
+        const d = new Date(joinedDate);
+        if (!isNaN(d.getTime())) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            joinedDate = `${year}-${month}-${day}`;
+        }
+    }
+
+    return {
+        accountNo: accNo,
+        nic: String(acc.nic || '-').trim(),
+        birthday: birthday,
+        gender: String(acc.gender || 'Male').trim(),
+        phone: phone,
+        joinedDate: joinedDate
+    };
+}
+
+function handleBackupFileRestore(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const reader = new FileReader();
+
+    if (ext === 'json') {
+        reader.onload = (e) => {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                let accounts = [];
+                if (Array.isArray(parsed)) {
+                    accounts = parsed;
+                } else if (parsed && Array.isArray(parsed.accounts)) {
+                    accounts = parsed.accounts;
+                } else {
+                    showToast('Invalid JSON file. Missing accounts list.', 'danger');
+                    return;
+                }
+
+                if (!accounts.length) {
+                    showToast('No member records found in this file.', 'danger');
+                    return;
+                }
+
+                if (confirm(`JSON Backup ගොනුවෙන් ගිණුම් ${accounts.length} ක් හමුවිය. Restore කිරීමට අවශ්‍යද?`)) {
+                    dbAccounts = mergeAndDeduplicate([...dbAccounts, ...accounts.map(formatRestoredAccount)]);
+                    saveDatabase();
+                    refreshAllViews();
+                    showToast(`✅ සාර්ථකයි! ගිණුම් ${accounts.length} ක් JSON ගොනුවෙන් Restore කරන ලදී.`, 'success');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Invalid JSON Backup file.', 'danger');
+            }
+        };
+        reader.readAsText(file);
+    } else if (['csv', 'xlsx', 'xls'].includes(ext)) {
+        parseExcelFile(file);
+    } else {
+        showToast('Unsupported format. Please select JSON, CSV, or Excel file.', 'danger');
     }
 }
 

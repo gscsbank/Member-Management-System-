@@ -584,9 +584,14 @@
                         </div>
 
                         <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
-                            <button type="button" class="btn-ios btn-primary" id="btnSyncAppsScript" style="background:linear-gradient(135deg, #16a34a, #15803d); border:none; padding:11px 22px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:8px;">
+                            <button type="button" class="btn-ios btn-primary" id="btnSyncAppsScript" style="background:linear-gradient(135deg, #16a34a, #15803d); border:none; padding:11px 20px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:8px;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
                                 <span id="btnSyncAppsScriptText">☁️ Sync &amp; Backup to Google Sheet Now</span>
+                            </button>
+
+                            <button type="button" class="btn-ios btn-secondary" id="btnRestoreAppsScript" style="background:#ffffff; color:#0369a1; border:1.5px solid #7dd3fc; font-weight:700; padding:11px 20px; font-size:13px; display:inline-flex; align-items:center; gap:8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span id="btnRestoreAppsScriptText">📥 Import &amp; Restore from Google Sheet</span>
                             </button>
 
                             <button type="button" class="btn-ios btn-secondary" id="btnOpenGoogleSheet" style="display:none; align-items:center; gap:6px; background:#ffffff; color:#15803d; border:1px solid #86efac; font-weight:600; padding:11px 16px;">
@@ -595,24 +600,67 @@
                             </button>
 
                             <button type="button" class="btn-ios btn-secondary" id="btnToggleScriptGuide" style="margin-left:auto; background:#ffffff; border:1px dashed #86efac; color:#15803d; font-size:12px; padding:8px 14px;">
-                                <span>❓ Google Script URL එක හදාගන්නේ කොහොමද?</span>
+                                <span>❓ Google Script Code Update (v2.0)</span>
                             </button>
                         </div>
 
                         <!-- Expandable Quick Guide -->
                         <div id="scriptGuideBox" style="display:none; margin-top:16px; padding:16px; background:#ffffff; border-radius:12px; border:1px solid #cbd5e1; font-size:13px; color:#334155; line-height:1.6;">
-                            <strong style="color:#0f172a; font-size:14px; display:block; margin-bottom:8px;">📌 Google Apps Script Web App එක සාදාගන්නා පියවර (Instructions):</strong>
-                            <ol style="margin:0 0 0 20px; padding:0;">
-                                <li>Google Drive හෝ <a href="https://sheets.new" target="_blank" style="color:#2563eb; font-weight:600; text-decoration:underline;">sheets.new</a> වෙත ගොස් අලුත් Google Sheet එකක් සාදා ගන්න (නම GSCS_Member_Backup වගේ දෙන්න).</li>
-                                <li>Sheet එකේ ඉහළ මෙනුවේ <strong>Extensions &gt; Apps Script</strong> (දිගු &gt; ඇප්ස් ස්ක්‍රිප්ට්) click කරන්න.</li>
-                                <li>එහි ඇති සියලුම කේත මකා දමා අප සපයා ඇති Google Apps Script කේතය (Code) paste කරන්න.</li>
-                                <li>ඉහළ ඇති Save icon එක (Ctrl+S) click කරන්න.</li>
-                                <li>ඉහළ දකුණු කෙලවරේ ඇති නිල් පාට <strong>Deploy &gt; New deployment</strong> click කරන්න.</li>
-                                <li>වම් පැත්තේ Gear icon (⚙️) click කර <strong>Web app</strong> තෝරන්න.</li>
-                                <li><strong>Description:</strong> "GSCS Backup", <strong>Execute as:</strong> "Me", <strong>Who has access:</strong> <span style="color:#dc2626; font-weight:700;">"Anyone"</span> ලෙස තෝරා <strong>Deploy</strong> click කරන්න.</li>
-                                <li>Google Account එකෙන් Authorization ඉල්ලුවොත් <em>Authorize access &gt; Advanced &gt; Go to (unsafe) &gt; Allow</em> කරන්න.</li>
-                                <li>ලැබෙන <strong>Web App URL</strong> එක copy කර මෙහි ඇති Box එකට paste කර "Save URL" කරන්න!</li>
-                            </ol>
+                            <strong style="color:#0f172a; font-size:14px; display:block; margin-bottom:8px;">📌 Google Apps Script Code v2.0 (Import / Restore &amp; Large Data Support):</strong>
+                            <p style="margin:0 0 10px 0; color:#64748b; font-size:12px;">
+                                Import / Restore පහසුකම සහ 1,000 කට වඩා වැඩි සියලුම සාමාජික වාර්තා කිසිදු අඩුවක් නැතිව Sheet එකට sync වීමට පහත Apps Script v2.0 කේතය ඔබගේ Apps Script Editor එකට දමා <strong>Deploy &gt; Manage deployments &gt; Edit (✏️) &gt; New version &gt; Deploy</strong> කරන්න:
+                            </p>
+                            <textarea readonly style="width:100%; height:160px; font-family:monospace; font-size:11px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:10px; resize:vertical;">/**
+ * GSCS SANASA Bank - Member Database Cloud Backup &amp; Restore API v2.0
+ */
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Members");
+    if (!sheet) return jsonOut({ status: "error", message: "Members sheet not found." });
+    var lastRow = sheet.getLastRow();
+    if (lastRow &lt; 2) return jsonOut({ status: "success", count: 0, accounts: [] });
+    var data = sheet.getRange(2, 1, lastRow - 1, 6).getValues();
+    var accounts = [];
+    for (var i = 0; i &lt; data.length; i++) {
+      var r = data[i];
+      if (r[0]) accounts.push({ accountNo: String(r[0]).trim(), nic: String(r[1]||'-').trim(), birthday: String(r[2]||'-').trim(), gender: String(r[3]||'Male').trim(), phone: String(r[4]||'-').trim(), joinedDate: String(r[5]||'-').trim() });
+    }
+    return jsonOut({ status: "success", count: accounts.length, sheetUrl: ss.getUrl(), accounts: accounts });
+  } catch (err) {
+    return jsonOut({ status: "error", message: err.toString() });
+  }
+}
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Members") || ss.insertSheet("Members");
+    if (data.action === 'fetch' || data.action === 'restore') return doGet(e);
+    var accounts = data.accounts || [];
+    sheet.clear();
+    sheet.getRange(1, 1, 1, 7).setValues([["Account No", "NIC Number", "Birthday", "Gender", "Phone Number", "Joined Date", "Last Synced Time"]]).setFontWeight("bold").setBackground("#2563eb").setFontColor("#ffffff");
+    if (accounts.length &gt; 0) {
+      var req = accounts.length + 1;
+      if (req &gt; sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), req - sheet.getMaxRows());
+      var rows = accounts.map(function(a) {
+        return [String(a.accountNo||''), String(a.nic||''), String(a.birthday||''), String(a.gender||''), String(a.phone||''), String(a.joinedDate||''), new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' })];
+      });
+      sheet.getRange(2, 1, rows.length, 7).setValues(rows);
+    }
+    sheet.autoResizeColumns(1, 7);
+    var log = ss.getSheetByName("Backup_Logs") || ss.insertSheet("Backup_Logs");
+    if (log.getLastRow() === 0) log.appendRow(["Timestamp", "Total Records", "Status", "Source"]);
+    log.appendRow([new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' }), accounts.length, "SUCCESS", "GSCS Web System"]);
+    return jsonOut({ status: "success", message: "Database successfully synced!", count: accounts.length, sheetUrl: ss.getUrl() });
+  } catch (err) {
+    return jsonOut({ status: "error", message: err.toString() });
+  }
+}
+function jsonOut(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}</textarea>
                         </div>
                     </div>
 
@@ -687,7 +735,7 @@
                                 <div class="card-title-bar">
                                     <h3>
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                        Data Export & Reports
+                                        Data Export &amp; Reports
                                     </h3>
                                 </div>
                                 <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Export clean CSV files containing all member accounts, birthdays, NICs, and contact info.</p>
@@ -695,6 +743,33 @@
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     <span>Export Full Account Database (CSV)</span>
                                 </button>
+                            </div>
+
+                            <!-- Data Import & Restore Card -->
+                            <div class="ios-card" style="border:1.5px solid #38bdf8; background:#f0f9ff;">
+                                <div class="card-title-bar">
+                                    <h3 style="color:#0369a1; display:flex; align-items:center; gap:6px;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        Data Import &amp; Restore Center
+                                    </h3>
+                                </div>
+                                <p style="font-size:13px; color:#0369a1; margin-bottom:14px; line-height:1.5;">
+                                    පරණ <strong>JSON, CSV හෝ Excel</strong> backup file එකකින් නැවත පද්ධතියට සාමාජික දත්ත import / restore කරගන්න.
+                                </p>
+                                
+                                <input type="file" id="backupRestoreFileInput" accept=".json,.csv,.xlsx,.xls" style="display:none;">
+                                
+                                <div style="display:flex; flex-direction:column; gap:10px;">
+                                    <button type="button" class="btn-ios btn-primary" id="btnSelectBackupFile" style="width:100%; justify-content:center; padding:11px; background:linear-gradient(135deg, #0284c7, #0369a1); border:none; font-weight:700;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        <span>Select Backup File to Import (JSON / CSV / Excel)</span>
+                                    </button>
+
+                                    <button type="button" class="btn-ios btn-secondary" onclick="document.querySelector('[data-page=import]').click()" style="width:100%; justify-content:center; background:#ffffff; color:#0369a1; border:1px solid #bae6fd; font-weight:600; padding:10px;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                        <span>Go to Smart PDF &amp; Excel Import Page ↗</span>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Danger Zone Card -->
